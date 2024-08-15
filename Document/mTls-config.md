@@ -7,7 +7,7 @@ This guide outlines the steps to set up mutual TLS (mTLS) in Azure API Managemen
 ### Prerequisites
 ##### Azure API Management (APIM) instance.
 ##### OpenSSL installed on your Ubuntu system.
-##### Postman for testing APIs.
+##### Postman or Terminal for testing APIs.
 
 
 ## Step 1: Generate Self-Signed Certificates
