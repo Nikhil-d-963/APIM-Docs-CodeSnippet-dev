@@ -1,0 +1,24 @@
+<!-- get header or set header value to variable -->
+context.Request.Headers.GetValueOrDefault("x-api-key","")
+<set-variable name="key" value="@(context.Request.Headers.GetValueOrDefault("x-api-key",""))" />
+
+
+<!-- get query params or set params value to variable -->
+<set-query-parameter name="paramName" exists-action="override | skip | append | delete">
+    <value>test</value>  <!--you can pass dynamic variables also -->
+</set-query-parameter>
+test ="@(context.Request.Url.Query.GetValueOrDefault("test"))" 
+
+
+
+
+<!-- set variable and get variable -->
+<set-variable name="test" value="test value" />
+
+<!-- for get variables -->
+<set-variable name="test" value="@(context.Variables.GetValueOrDefault<string>("testVariables"))" />
+<set-variable name="test" value="@(int.Parse((string)context.Variables["testInter"])" />
+
+
+extract variable from request Body
+<set-variable name="latlong" value="@(((IResponse)context.Variables["response="""]).Body.As<JObject>()["results"][0]["geometry"]["location"].ToString())"/>

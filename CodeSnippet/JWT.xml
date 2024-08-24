@@ -1,12 +1,3 @@
-# Configuring JWT Validation in Azure API Management (APIM)
-This guide provides instructions for configuring JWT validation in Azure API Management (APIM) and removing the JWT token after verification.
-
-Configuration Steps
-1. Configure JWT Validation
-Add the validate-jwt policy to your API's policy configuration to validate the JWT token provided in the Authorization header.
-
-
-```shell 
 <validate-jwt
     header-name="name of HTTP header containing the token (alternatively, use query-parameter-name or token-value attribute to specify token)"
     query-parameter-name="name of query parameter used to pass the token (alternative, use header-name or token-value attribute to specify token)"
@@ -43,8 +34,14 @@ Add the validate-jwt policy to your API's policy configuration to validate the J
     <!-- if there are multiple possible allowed claim, then add additional claim elements -->
   </required-claims>
 </validate-jwt>
-```
 
-#### The {{jwt-key}} placeholder represents the JWT signing key stored as a named value in APIM. You can also dynamically fetch the key from a third-party source if needed.
 
-For more details on the validate-jwt policy and additional configuration options, refer to the [Azure API Management JWT Validation Policy Documentation.](https://learn.microsoft.com/en-us/azure/api-management/validate-jwt-policy)
+
+
+<!-- Simple JWT -->
+
+        <validate-jwt header-name="Authorization" failed-validation-httpcode="401" failed-validation-error-message="Unauthorized">
+            <issuer-signing-keys>
+                <key>{{jwt-key}}</key>
+            </issuer-signing-keys>
+        </validate-jwt>
