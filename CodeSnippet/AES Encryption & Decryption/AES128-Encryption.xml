@@ -1,0 +1,23 @@
+<!-- Dynamic Encryption  -->
+
+        <set-variable name="IV" value="{{AES-IV}}" />
+        <set-variable name="key" value="@(context.Request.Headers.GetValueOrDefault("x-api-key",""))" />
+        <set-variable name="encryptedReq" value="@{
+
+            string reqBody = context.Request.Body.As<string>(preserveContent: true); 
+            byte[] reqBodyBytes = Encoding.UTF8.GetBytes(reqBody);
+            
+            byte[] IV = Convert.FromBase64String((string)context.Variables["IV"]);
+            byte[] key = Convert.FromBase64String((string)context.Variables["key"]);
+            
+            byte[] encryptedBytes = reqBodyBytes.Encrypt("Aes", key, IV);
+            
+            return Convert.ToBase64String(encryptedBytes);
+        }" />
+        <return-response>
+            <set-status code="200" reason="ok" />
+            <set-header name="Content-Type" exists-action="override">
+                <value>text/plain</value>
+            </set-header>
+            <set-body>@(context.Variables.GetValueOrDefault<string>("encryptedReq"))</set-body>
+        </return-response>

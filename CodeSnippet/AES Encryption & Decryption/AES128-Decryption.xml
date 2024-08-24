@@ -1,0 +1,18 @@
+<!-- Dynamic Decryption  -->
+
+  <set-variable name="IV" value="{{AES-IV}}" />
+        <set-variable name="key" value="@(context.Request.Headers.GetValueOrDefault("x-api-key",""))" />
+        <set-variable name="plainText" value="@{
+            byte[] inBytes = Convert.FromBase64String(context.Request.Body.As<string>(preserveContent: true));
+            byte[] IV = Convert.FromBase64String((string)context.Variables["IV"]);
+            byte[] key = Convert.FromBase64String((string)context.Variables["key"]);
+            byte[] decryptedBytes = inBytes.Decrypt("Aes", key, IV);
+            return Encoding.UTF8.GetString(decryptedBytes);
+         }" />
+        <return-response>
+            <set-status code="200" reason="Success" />
+            <set-body>@{ 
+                    string inBody = (string)context.Variables["plainText"];                     
+                    return inBody; 
+                }</set-body>
+        </return-response>

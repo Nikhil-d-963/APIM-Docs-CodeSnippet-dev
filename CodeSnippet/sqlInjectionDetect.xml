@@ -1,0 +1,18 @@
+        <set-variable name="isSqlInjectionBody" value="@(context.Request.Body != null && (
+                                                         Regex.IsMatch(context.Request.Body.As<string>(preserveContent: true), @"\b(delete|DROP|insert|shutdown|update|UPDATE|CREATE|ALTER|DROP|TRUNCATE|EXEC|UNION|SELECT|WHERE|AND|OR|LIKE|CAST|CONVERT|T-SQL|XP_|DBCC|sp_|fn_|sys_)\b", RegexOptions.IgnoreCase) ||
+                                                         Regex.IsMatch(context.Request.Body.As<string>(preserveContent: true), @"<\s*script\b[^>]*>(.*?)</\s*script\s*>", RegexOptions.IgnoreCase) ||
+                                                         Regex.IsMatch(context.Request.Body.As<string>(preserveContent: true), @"<\s*iframe\b[^>]*>(.*?)</\s*iframe\s*>", RegexOptions.IgnoreCase) ||
+                                                         Regex.IsMatch(context.Request.Body.As<string>(preserveContent: true), @"<\s*object\b[^>]*>(.*?)</\s*object\s*>", RegexOptions.IgnoreCase) ||
+                                                         Regex.IsMatch(context.Request.Body.As<string>(preserveContent: true), @"<\s*embed\b[^>]*>(.*?)</\s*embed\s*>", RegexOptions.IgnoreCase) ||
+                                                         Regex.IsMatch(context.Request.Body.As<string>(preserveContent: true), @"<\s*applet\b[^>]*>(.*?)</\s*applet\s*>", RegexOptions.IgnoreCase) ||
+                                                         Regex.IsMatch(context.Request.Body.As<string>(preserveContent: true), @"<\s*form\b[^>]*>(.*?)</\s*form\s*>", RegexOptions.IgnoreCase) ||
+                                                         Regex.IsMatch(context.Request.Body.As<string>(preserveContent: true), @"<\s*meta\b[^>]*>(.*?)</\s*meta\s*>", RegexOptions.IgnoreCase)))" />
+        <!-- If SQL Injection is detected, return a 403 Forbidden response -->
+        <choose>
+            <when condition="@(context.Variables.GetValueOrDefault<bool>("isSqlInjectionBody"))">
+                <return-response>
+                    <set-status code="403" reason="Forbidden" />
+                    <set-body>SQL Injection detected.</set-body>
+                </return-response>
+            </when>
+        </choose>
